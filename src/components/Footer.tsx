@@ -1,4 +1,5 @@
-import { Shield, Newspaper, Search, Users } from "lucide-react";
+import { Newspaper, Search, Users } from "lucide-react";
+import truefyLogo from "@/assets/truefy-logo.png";
 
 const Footer = () => {
   const useCases = [
@@ -12,9 +13,9 @@ const Footer = () => {
       <div className="container mx-auto px-6 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-primary" />
+            <img src={truefyLogo} alt="TRUEFY" className="w-6 h-6 object-contain" />
             <span className="text-sm text-muted-foreground">
-              Designed for real-world media verification
+              <span className="font-semibold text-foreground">TRUEFY</span> — Designed for real-world media verification
             </span>
           </div>
 
