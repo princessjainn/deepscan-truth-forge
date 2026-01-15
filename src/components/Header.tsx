@@ -1,4 +1,4 @@
-import { Activity, Cpu } from "lucide-react";
+import { Activity, Cpu, Shield, Building2 } from "lucide-react";
 import truefyLogo from "@/assets/truefy-logo.png";
 
 const Header = () => {
@@ -11,18 +11,23 @@ const Header = () => {
               <img 
                 src={truefyLogo} 
                 alt="TRUEFY Logo" 
-                className="w-12 h-12 object-contain"
+                className="w-14 h-14 object-contain"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight flex items-center gap-1">
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-1">
                 <span className="text-foreground">TRUE</span>
                 <span className="gradient-text">FY</span>
               </h1>
               <p className="text-xs text-muted-foreground">
-                Trust • Reliability • Understanding • Evidence • For You
+                Enterprise Fraud Prevention & Media Verification
               </p>
             </div>
+          </div>
+          
+          <div className="hidden lg:flex items-center gap-2 ml-6 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+            <Building2 className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium text-primary">Food Delivery Platform Integration</span>
           </div>
         </div>
 
@@ -30,13 +35,17 @@ const Header = () => {
           <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              <span>v2.4.1</span>
+              <span>v3.0.1</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-success" />
+              <span className="text-success">GDPR Compliant</span>
             </div>
           </div>
           
           <div className="status-active">
             <Cpu className="w-3.5 h-3.5" />
-            <span>AI Engine Active</span>
+            <span>Fraud Engine Active</span>
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
           </div>
         </div>

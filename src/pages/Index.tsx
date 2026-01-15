@@ -1,12 +1,12 @@
 import { useState } from "react";
 import Header from "@/components/Header";
-import MediaUpload from "@/components/MediaUpload";
-import RiskSummary from "@/components/RiskSummary";
-import ManipulationTimeline from "@/components/ManipulationTimeline";
-import AnalysisTabs from "@/components/AnalysisTabs";
-import HumanPlausibilityIndex from "@/components/HumanPlausibilityIndex";
-import ForensicReport from "@/components/ForensicReport";
-import RobustnessTest from "@/components/RobustnessTest";
+import ComplaintUpload from "@/components/ComplaintUpload";
+import FraudRiskScore from "@/components/FraudRiskScore";
+import MediaReuseDetection from "@/components/MediaReuseDetection";
+import OrderConsistencyCheck from "@/components/OrderConsistencyCheck";
+import VoiceFraudDetection from "@/components/VoiceFraudDetection";
+import BusinessImpactDashboard from "@/components/BusinessImpactDashboard";
+import IntegrationFlow from "@/components/IntegrationFlow";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -29,35 +29,39 @@ const Index = () => {
       <Header />
       
       <main className="flex-1 container mx-auto px-4 lg:px-6 py-6">
+        {/* Integration Flow */}
+        <div className="mb-6">
+          <IntegrationFlow isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
+        </div>
+
         {/* Main grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left column - Media Upload */}
+          {/* Left column - Complaint Upload */}
           <div className="lg:col-span-3">
-            <MediaUpload onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+            <ComplaintUpload onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
           </div>
 
-          {/* Center column - Risk Summary & Timeline */}
-          <div className="lg:col-span-6 space-y-6">
-            <RiskSummary isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
-            <ManipulationTimeline isAnalyzed={isAnalyzed} />
+          {/* Center column - Fraud Risk Score */}
+          <div className="lg:col-span-6">
+            <FraudRiskScore isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
           </div>
 
-          {/* Right column - Human Plausibility Index */}
+          {/* Right column - Order Consistency */}
           <div className="lg:col-span-3">
-            <HumanPlausibilityIndex isAnalyzed={isAnalyzed} />
+            <OrderConsistencyCheck isAnalyzed={isAnalyzed} />
           </div>
         </div>
 
-        {/* Full width sections */}
+        {/* Secondary analysis grid */}
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AnalysisTabs isAnalyzed={isAnalyzed} />
-          <ForensicReport isAnalyzed={isAnalyzed} />
+          <MediaReuseDetection isAnalyzed={isAnalyzed} />
+          <VoiceFraudDetection isAnalyzed={isAnalyzed} />
         </div>
 
-        {/* Robustness Test - Full width */}
+        {/* Business Impact Dashboard - Full width */}
         <div className="mt-6">
-          <RobustnessTest isAnalyzed={isAnalyzed} />
+          <BusinessImpactDashboard isAnalyzed={isAnalyzed} />
         </div>
       </main>
 
