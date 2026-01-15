@@ -1,4 +1,4 @@
-import { ArrowRight, Upload, Cpu, Shield, CheckCircle, XCircle, Eye } from "lucide-react";
+import { ArrowRight, Upload, Cpu, Shield, CheckCircle, Eye } from "lucide-react";
 
 interface IntegrationFlowProps {
   isAnalyzed: boolean;
@@ -9,26 +9,22 @@ const IntegrationFlow = ({ isAnalyzed, isAnalyzing }: IntegrationFlowProps) => {
   const steps = [
     {
       icon: Upload,
-      label: "Complaint Submitted",
-      description: "User uploads evidence",
+      label: "Submit",
       status: isAnalyzed || isAnalyzing ? "complete" : "pending"
     },
     {
       icon: Cpu,
       label: "TRUEFY API",
-      description: "Fraud detection pipeline",
       status: isAnalyzing ? "active" : isAnalyzed ? "complete" : "pending"
     },
     {
       icon: Shield,
-      label: "Verification",
-      description: "Multi-modal analysis",
+      label: "Verify",
       status: isAnalyzing ? "active" : isAnalyzed ? "complete" : "pending"
     },
     {
       icon: isAnalyzed ? Eye : CheckCircle,
-      label: isAnalyzed ? "Manual Review" : "Decision",
-      description: isAnalyzed ? "Flagged for review" : "Action recommendation",
+      label: isAnalyzed ? "Review" : "Decision",
       status: isAnalyzed ? "flagged" : "pending"
     }
   ];
@@ -58,44 +54,22 @@ const IntegrationFlow = ({ isAnalyzed, isAnalyzing }: IntegrationFlowProps) => {
   };
 
   return (
-    <div className="forensic-card p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-primary/10">
-          <ArrowRight className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h3 className="font-semibold">TRUEFY Integration Flow</h3>
-          <p className="text-xs text-muted-foreground">Real-time complaint verification pipeline</p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
+    <div className="forensic-card p-5">
+      <div className="flex items-center justify-between gap-4 overflow-x-auto pb-2">
         {steps.map((step, i) => (
-          <div key={i} className="flex items-center flex-1">
-            {/* Step Circle */}
-            <div className="flex flex-col items-center">
-              <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${getStatusColor(step.status)}`}>
-                <step.icon className="w-5 h-5" />
+          <div key={i} className="flex items-center flex-1 min-w-0">
+            <div className="flex flex-col items-center flex-shrink-0">
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${getStatusColor(step.status)}`}>
+                <step.icon className="w-4 h-4" />
               </div>
-              <div className="mt-2 text-center">
-                <div className="text-xs font-semibold">{step.label}</div>
-                <div className="text-xs text-muted-foreground">{step.description}</div>
-              </div>
+              <span className="mt-1.5 text-xs font-medium text-center whitespace-nowrap">{step.label}</span>
             </div>
             
-            {/* Connector Line */}
             {i < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-2 ${getLineColor(step.status)}`} />
+              <div className={`flex-1 h-0.5 mx-3 min-w-[40px] ${getLineColor(step.status)}`} />
             )}
           </div>
         ))}
-      </div>
-
-      {/* Power Statement */}
-      <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-forensic-cyan/5 border border-primary/20 text-center">
-        <p className="text-sm font-medium text-foreground">
-          "TRUEFY prevents AI-driven refund fraud by verifying complaint media authenticity in real time for delivery platforms."
-        </p>
       </div>
     </div>
   );
