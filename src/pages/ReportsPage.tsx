@@ -1,102 +1,151 @@
 import { useState } from "react";
 import MainLayout from "@/components/layouts/MainLayout";
-import ForensicReport from "@/components/ForensicReport";
-import MediaUpload from "@/components/MediaUpload";
-import { useDeepfakeAnalysis } from "@/hooks/useDeepfakeAnalysis";
-import { FileText, Upload, Download, Share2 } from "lucide-react";
+import BusinessImpactDashboard from "@/components/BusinessImpactDashboard";
+import PlatformAnalytics from "@/components/PlatformAnalytics";
+import RecentVerifications from "@/components/RecentVerifications";
+import FraudTrendChart from "@/components/FraudTrendChart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  BarChart3, 
+  Building2, 
+  FileText, 
+  Download, 
+  Calendar,
+  Filter,
+  RefreshCw
+} from "lucide-react";
 
 const ReportsPage = () => {
-  const [mediaType, setMediaType] = useState<"image" | "video" | "audio">("video");
-  const { isAnalyzing, analysisResult, analyzeMedia, resetAnalysis } = useDeepfakeAnalysis();
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleAnalyze = async (type: "image" | "video" | "audio", mediaData?: string) => {
-    setMediaType(type);
-    await analyzeMedia(type, mediaData, ["visual", "audio", "temporal", "metadata"]);
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 1500);
   };
 
-  const isAnalyzed = !!analysisResult;
-
   return (
-    <MainLayout title="Reports" subtitle="Forensic Report Generation">
+    <MainLayout title="Business Reports" subtitle="Enterprise Fraud Prevention Analytics">
       <div className="space-y-6">
-        {/* Upload Section when no analysis */}
-        {!isAnalyzed && !isAnalyzing && (
-          <div className="max-w-2xl mx-auto">
-            <MediaUpload
-              onAnalyze={handleAnalyze}
-              isAnalyzing={isAnalyzing}
-              onReset={resetAnalysis}
-            />
+        {/* Header Actions */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="gap-1">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              Live Data
+            </Badge>
+            <Badge variant="secondary">Last updated: 2 min ago</Badge>
           </div>
-        )}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Calendar className="w-4 h-4" />
+              Date Range
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Filter className="w-4 h-4" />
+              Filters
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+            <Button size="sm" className="gap-2">
+              <Download className="w-4 h-4" />
+              Export Report
+            </Button>
+          </div>
+        </div>
 
-        {/* Report Section */}
-        {isAnalyzed && (
-          <>
-            {/* Report Actions */}
-            <div className="forensic-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <FileText className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">Forensic Report Ready</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Export or share your analysis report
+        {/* Business Impact Dashboard */}
+        <BusinessImpactDashboard />
+
+        {/* Main Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="bg-muted/50 p-1">
+            <TabsTrigger value="overview" className="gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="platforms" className="gap-2">
+              <Building2 className="w-4 h-4" />
+              Platform Analytics
+            </TabsTrigger>
+            <TabsTrigger value="verifications" className="gap-2">
+              <FileText className="w-4 h-4" />
+              Verifications
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Trend Charts */}
+            <FraudTrendChart />
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-card border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    TRUEFY Integration Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
+                    <span className="font-semibold">All Systems Operational</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    API Response Time: 1.2s avg
                   </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Share2 className="w-4 h-4" />
-                  Share
-                </Button>
-                <Button size="sm" className="gap-2">
-                  <Download className="w-4 h-4" />
-                  Export PDF
-                </Button>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
 
-            {/* Forensic Report */}
-            <ForensicReport isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
+              <Card className="bg-card border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    AI Model Accuracy
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-primary">98.7%</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Based on 42,940 verified cases
+                  </p>
+                </CardContent>
+              </Card>
 
-            {/* New Analysis Button */}
-            <div className="text-center">
-              <Button variant="outline" onClick={resetAnalysis} className="gap-2">
-                <Upload className="w-4 h-4" />
-                Analyze New Media
-              </Button>
+              <Card className="bg-card border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Monthly ROI
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-success">324%</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Cost savings vs. manual review
+                  </p>
+                </CardContent>
+              </Card>
             </div>
-          </>
-        )}
+          </TabsContent>
 
-        {/* Empty State */}
-        {!isAnalyzed && !isAnalyzing && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
-              <FileText className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">No Reports Available</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Upload and analyze media to generate a comprehensive forensic report
-            </p>
-          </div>
-        )}
+          <TabsContent value="platforms">
+            <PlatformAnalytics />
+          </TabsContent>
 
-        {/* Loading State */}
-        {isAnalyzing && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Generating Report...</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Please wait while we analyze your media and generate the forensic report
-            </p>
-          </div>
-        )}
+          <TabsContent value="verifications">
+            <RecentVerifications />
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );
