@@ -1,15 +1,16 @@
 import { useState } from "react";
 import Header from "@/components/Header";
-import ComplaintUpload from "@/components/ComplaintUpload";
-import FraudRiskScore from "@/components/FraudRiskScore";
-import MediaReuseDetection from "@/components/MediaReuseDetection";
-import OrderConsistencyCheck from "@/components/OrderConsistencyCheck";
-import VoiceFraudDetection from "@/components/VoiceFraudDetection";
-import BusinessImpactDashboard from "@/components/BusinessImpactDashboard";
+import MediaUpload from "@/components/MediaUpload";
+import RiskSummary from "@/components/RiskSummary";
+import VisualForensics from "@/components/VisualForensics";
+import AudioAnalysis from "@/components/AudioAnalysis";
+import TemporalAnalysis from "@/components/TemporalAnalysis";
+import MetadataAnalysis from "@/components/MetadataAnalysis";
+import ForensicReport from "@/components/ForensicReport";
 import IntegrationFlow from "@/components/IntegrationFlow";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Fingerprint, Package, Mic, BarChart3 } from "lucide-react";
+import { Eye, Mic, Clock, FileCode } from "lucide-react";
 
 const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -31,27 +32,27 @@ const Index = () => {
       
       <main className="flex-1 container mx-auto px-4 lg:px-8 py-8 space-y-8">
         
-        {/* Section 1: Integration Flow */}
+        {/* Section 1: Analysis Flow */}
         <section>
           <IntegrationFlow isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
         </section>
 
-        {/* Section 2: Main Verification Panel */}
+        {/* Section 2: Main Analysis Panel */}
         <section>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-primary rounded-full" />
-            <h2 className="text-lg font-semibold">Complaint Verification</h2>
+            <h2 className="text-lg font-semibold">Media Authenticity Analysis</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left - Upload Panel */}
             <div className="lg:col-span-4">
-              <ComplaintUpload onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+              <MediaUpload onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
             </div>
 
-            {/* Right - Fraud Risk Score */}
+            {/* Right - Risk Summary */}
             <div className="lg:col-span-8">
-              <FraudRiskScore isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
+              <RiskSummary isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
             </div>
           </div>
         </section>
@@ -60,59 +61,69 @@ const Index = () => {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-primary rounded-full" />
-            <h2 className="text-lg font-semibold">Detailed Analysis</h2>
+            <h2 className="text-lg font-semibold">Multi-Modal Forensic Analysis</h2>
           </div>
 
-          <Tabs defaultValue="consistency" className="w-full">
+          <Tabs defaultValue="visual" className="w-full">
             <TabsList className="w-full justify-start bg-card border border-border p-1 h-auto flex-wrap gap-1">
               <TabsTrigger 
-                value="consistency" 
+                value="visual" 
                 className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
-                <Package className="w-4 h-4" />
-                <span>Order Consistency</span>
+                <Eye className="w-4 h-4" />
+                <span>Visual</span>
               </TabsTrigger>
               <TabsTrigger 
-                value="reuse" 
-                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              >
-                <Fingerprint className="w-4 h-4" />
-                <span>Media Reuse</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="voice" 
+                value="audio" 
                 className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
                 <Mic className="w-4 h-4" />
-                <span>Voice Analysis</span>
+                <span>Audio</span>
               </TabsTrigger>
               <TabsTrigger 
-                value="impact" 
+                value="temporal" 
                 className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
-                <BarChart3 className="w-4 h-4" />
-                <span>Business Impact</span>
+                <Clock className="w-4 h-4" />
+                <span>Temporal</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="metadata" 
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <FileCode className="w-4 h-4" />
+                <span>Metadata</span>
               </TabsTrigger>
             </TabsList>
 
             <div className="mt-4">
-              <TabsContent value="consistency" className="mt-0">
-                <OrderConsistencyCheck isAnalyzed={isAnalyzed} />
+              <TabsContent value="visual" className="mt-0">
+                <VisualForensics isAnalyzed={isAnalyzed} />
               </TabsContent>
               
-              <TabsContent value="reuse" className="mt-0">
-                <MediaReuseDetection isAnalyzed={isAnalyzed} />
+              <TabsContent value="audio" className="mt-0">
+                <AudioAnalysis isAnalyzed={isAnalyzed} />
               </TabsContent>
               
-              <TabsContent value="voice" className="mt-0">
-                <VoiceFraudDetection isAnalyzed={isAnalyzed} />
+              <TabsContent value="temporal" className="mt-0">
+                <TemporalAnalysis isAnalyzed={isAnalyzed} />
               </TabsContent>
 
-              <TabsContent value="impact" className="mt-0">
-                <BusinessImpactDashboard isAnalyzed={isAnalyzed} />
+              <TabsContent value="metadata" className="mt-0">
+                <MetadataAnalysis isAnalyzed={isAnalyzed} />
               </TabsContent>
             </div>
           </Tabs>
+        </section>
+
+        {/* Section 4: Forensic Report */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-6 bg-primary rounded-full" />
+            <h2 className="text-lg font-semibold">Explainable Forensic Report</h2>
+          </div>
+          
+          <ForensicReport isAnalyzed={isAnalyzed} />
         </section>
 
       </main>

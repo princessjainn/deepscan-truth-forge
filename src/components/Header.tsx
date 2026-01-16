@@ -1,4 +1,4 @@
-import { Activity, Cpu, Shield, Building2 } from "lucide-react";
+import { Activity, Cpu, Shield, Scan } from "lucide-react";
 import truefyLogo from "@/assets/truefy-logo.png";
 
 const Header = () => {
@@ -20,14 +20,14 @@ const Header = () => {
                 <span className="gradient-text">FY</span>
               </h1>
               <p className="text-xs text-muted-foreground">
-                Enterprise Fraud Prevention & Media Verification
+                Deepfake Detection & Media Authenticity Analyzer
               </p>
             </div>
           </div>
           
           <div className="hidden lg:flex items-center gap-2 ml-6 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-            <Building2 className="w-4 h-4 text-primary" />
-            <span className="text-xs font-medium text-primary">Food Delivery Platform Integration</span>
+            <Scan className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium text-primary">AI-Powered Forensic Analysis</span>
           </div>
         </div>
 
@@ -39,13 +39,13 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-success" />
-              <span className="text-success">GDPR Compliant</span>
+              <span className="text-success">Privacy Compliant</span>
             </div>
           </div>
           
           <div className="status-active">
             <Cpu className="w-3.5 h-3.5" />
-            <span>Fraud Engine Active</span>
+            <span>Detection Engine Active</span>
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
           </div>
         </div>

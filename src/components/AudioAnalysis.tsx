@@ -1,10 +1,10 @@
-import { Mic, AlertTriangle, User, Phone, Clock } from "lucide-react";
+import { Mic, AlertTriangle, Activity, AudioWaveform } from "lucide-react";
 
-interface VoiceFraudDetectionProps {
+interface AudioAnalysisProps {
   isAnalyzed: boolean;
 }
 
-const VoiceFraudDetection = ({ isAnalyzed }: VoiceFraudDetectionProps) => {
+const AudioAnalysis = ({ isAnalyzed }: AudioAnalysisProps) => {
   if (!isAnalyzed) {
     return (
       <div className="forensic-card p-6">
@@ -12,20 +12,20 @@ const VoiceFraudDetection = ({ isAnalyzed }: VoiceFraudDetectionProps) => {
           <div className="p-2 rounded-lg bg-primary/10">
             <Mic className="w-5 h-5 text-primary" />
           </div>
-          <h3 className="font-semibold">Voice Fraud Detection</h3>
+          <h3 className="font-semibold">Audio Analysis</h3>
         </div>
         <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">
-          Run verification to see results
+          Run analysis to see results
         </div>
       </div>
     );
   }
 
-  const voiceMetrics = [
+  const audioMetrics = [
     { label: "Voice Authenticity", value: 34, status: "danger" },
-    { label: "Natural Speech", value: 28, status: "danger" },
-    { label: "Emotional Consistency", value: 62, status: "warning" },
-    { label: "Background Authenticity", value: 89, status: "success" },
+    { label: "Formant Analysis", value: 28, status: "danger" },
+    { label: "Speech Cadence", value: 45, status: "warning" },
+    { label: "Background Audio", value: 89, status: "success" },
   ];
 
   const getProgressColor = (status: string) => {
@@ -44,11 +44,11 @@ const VoiceFraudDetection = ({ isAnalyzed }: VoiceFraudDetectionProps) => {
           <div className="p-2 rounded-lg bg-destructive/10">
             <Mic className="w-5 h-5 text-destructive" />
           </div>
-          <h3 className="font-semibold">Voice Fraud Detection</h3>
+          <h3 className="font-semibold">Audio Analysis</h3>
         </div>
         <span className="threat-high text-xs">
           <AlertTriangle className="w-3 h-3" />
-          CLONE DETECTED
+          SYNTHETIC VOICE
         </span>
       </div>
 
@@ -58,12 +58,12 @@ const VoiceFraudDetection = ({ isAnalyzed }: VoiceFraudDetectionProps) => {
           <span>Voice Cloning Detected</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          72% confidence synthetic voice
+          Neural TTS patterns identified in audio stream
         </p>
       </div>
 
       <div className="space-y-3 mb-4">
-        {voiceMetrics.map((metric, i) => (
+        {audioMetrics.map((metric, i) => (
           <div key={i}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm">{metric.label}</span>
@@ -79,30 +79,20 @@ const VoiceFraudDetection = ({ isAnalyzed }: VoiceFraudDetectionProps) => {
         ))}
       </div>
 
-      <div className="p-3 rounded-lg bg-muted/30 border border-border mb-4">
-        <div className="flex items-center gap-2 mb-1">
-          <User className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-xs font-medium">Speaker Identity Reuse</span>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Same voice in 4 previous calls
-        </p>
-      </div>
-
       <div className="grid grid-cols-2 gap-3">
         <div className="p-3 rounded-lg bg-muted/30 text-center">
-          <Phone className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-          <div className="text-sm font-semibold">12</div>
-          <div className="text-xs text-muted-foreground">Total Calls</div>
+          <AudioWaveform className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+          <div className="text-sm font-semibold">Spectral</div>
+          <div className="text-xs text-muted-foreground">Anomalies Found</div>
         </div>
         <div className="p-3 rounded-lg bg-muted/30 text-center">
-          <Clock className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
-          <div className="text-sm font-semibold">4m 32s</div>
-          <div className="text-xs text-muted-foreground">Avg Duration</div>
+          <Activity className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+          <div className="text-sm font-semibold">87%</div>
+          <div className="text-xs text-muted-foreground">Synthetic Prob.</div>
         </div>
       </div>
     </div>
   );
 };
 
-export default VoiceFraudDetection;
+export default AudioAnalysis;

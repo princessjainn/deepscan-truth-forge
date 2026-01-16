@@ -1,13 +1,12 @@
-import { Building2, ShieldCheck, Zap, Server } from "lucide-react";
+import { ShieldCheck, Zap, Server, Globe } from "lucide-react";
 import truefyLogo from "@/assets/truefy-logo.png";
 
 const Footer = () => {
-  const platforms = ["Zomato", "Swiggy", "Blinkit", "Zepto"];
-  
   const features = [
-    { icon: ShieldCheck, label: "GDPR Compliant" },
+    { icon: ShieldCheck, label: "Privacy Compliant" },
     { icon: Zap, label: "Low-Latency API" },
     { icon: Server, label: "Enterprise Scale" },
+    { icon: Globe, label: "Multi-Format Support" },
   ];
 
   return (
@@ -18,23 +17,11 @@ const Footer = () => {
             <img src={truefyLogo} alt="TRUEFY" className="w-8 h-8 object-contain" />
             <div>
               <span className="text-sm font-semibold text-foreground">TRUEFY</span>
-              <span className="text-sm text-muted-foreground"> — Enterprise Media Trust & Fraud Intelligence</span>
+              <span className="text-sm text-muted-foreground"> — Deepfake Detection & Media Authenticity</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Integrated with:</span>
-              {platforms.map((p, i) => (
-                <span key={p} className="text-xs text-primary font-medium">
-                  {p}{i < platforms.length - 1 && <span className="text-muted-foreground mx-1">•</span>}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap justify-center">
             {features.map((f) => (
               <div key={f.label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <f.icon className="w-3.5 h-3.5 text-success" />
@@ -42,6 +29,12 @@ const Footer = () => {
               </div>
             ))}
           </div>
+        </div>
+        
+        <div className="mt-4 pt-4 border-t border-border/50 text-center">
+          <p className="text-xs text-muted-foreground">
+            Designed for journalists, cybersecurity investigators, law enforcement, and content verification teams
+          </p>
         </div>
       </div>
     </footer>
