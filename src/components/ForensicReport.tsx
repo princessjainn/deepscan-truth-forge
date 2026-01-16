@@ -1,51 +1,15 @@
 import { FileText, AlertCircle, Copy, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { AnalysisResult } from "@/hooks/useDeepfakeAnalysis";
 
-const ForensicReport = ({ isAnalyzed }: { isAnalyzed: boolean }) => {
-  const reportItems = [
-    {
-      severity: "critical",
-      title: "Face Swap Technology Detected",
-      description: "GAN-based face replacement identified with characteristic boundary artifacts around jaw and hairline regions. Confidence: 94%"
-    },
-    {
-      severity: "critical",
-      title: "Voice Cloning Identified",
-      description: "Audio spectral analysis reveals synthetic voice generation patterns. Formant frequencies inconsistent with natural human speech production."
-    },
-    {
-      severity: "critical",
-      title: "Audio-Visual Desynchronization",
-      description: "Lip movements lag behind audio by approximately 120ms, exceeding natural human tolerance threshold of 45ms."
-    },
-    {
-      severity: "warning",
-      title: "Abnormal Blink Rhythm",
-      description: "Subject displays irregular blinking pattern with 3.2 second gaps, significantly exceeding natural 4-6 second average intervals."
-    },
-    {
-      severity: "warning",
-      title: "GAN Noise Artifacts",
-      description: "Periodic noise patterns consistent with StyleGAN2 architecture detected in facial region. Anomaly score: 0.87"
-    },
-    {
-      severity: "info",
-      title: "Multiple Platform Compression",
-      description: "File exhibits compression fingerprints from Instagram, WhatsApp, and Telegram, suggesting viral distribution across platforms."
-    }
-  ];
+interface ForensicReportProps {
+  isAnalyzed: boolean;
+  analysisResult?: AnalysisResult | null;
+}
 
-  const handleCopy = () => {
-    const reportText = reportItems.map(item => `[${item.severity.toUpperCase()}] ${item.title}: ${item.description}`).join('\n\n');
-    navigator.clipboard.writeText(reportText);
-    toast({
-      title: "Report Copied",
-      description: "Forensic report has been copied to clipboard",
-    });
-  };
-
-  if (!isAnalyzed) {
+const ForensicReport = ({ isAnalyzed, analysisResult }: ForensicReportProps) => {
+  if (!isAnalyzed || !analysisResult) {
     return (
       <div className="forensic-card p-6">
         <div className="flex items-center gap-3 mb-6">
@@ -54,7 +18,7 @@ const ForensicReport = ({ isAnalyzed }: { isAnalyzed: boolean }) => {
           </div>
           <div>
             <h2 className="font-semibold">Explainable Forensic Report</h2>
-            <p className="text-xs text-muted-foreground">Human-readable analysis summary</p>
+            <p className="text-xs text-muted-foreground">AI-generated analysis summary</p>
           </div>
         </div>
         
@@ -65,16 +29,110 @@ const ForensicReport = ({ isAnalyzed }: { isAnalyzed: boolean }) => {
     );
   }
 
+  // Generate report items from analysis result
+  const reportItems: { severity: string; title: string; description: string }[] = [];
+
+  // Add threats as report items
+  if (analysisResult.threats) {
+    analysisResult.threats.forEach(threat => {
+      reportItems.push({
+        severity: threat.severity === "CRITICAL" || threat.severity === "HIGH" ? "critical" : 
+                  threat.severity === "MEDIUM" ? "warning" : "info",
+        title: threat.type,
+        description: threat.description
+      });
+    });
+  }
+
+  // Add manipulation types
+  if (analysisResult.manipulationTypes) {
+    analysisResult.manipulationTypes.forEach(type => {
+      if (!reportItems.find(item => item.title.toLowerCase().includes(type.toLowerCase()))) {
+        reportItems.push({
+          severity: "warning",
+          title: type,
+          description: `${type} manipulation detected with ${analysisResult.confidence}% confidence`
+        });
+      }
+    });
+  }
+
+  // Add recommendations as info items
+  if (analysisResult.recommendations) {
+    analysisResult.recommendations.forEach(rec => {
+      reportItems.push({
+        severity: "info",
+        title: "Recommendation",
+        description: rec
+      });
+    });
+  }
+
+  // Fallback if no items
+  if (reportItems.length === 0) {
+    reportItems.push({
+      severity: analysisResult.verdict === "LIKELY_MANIPULATED" ? "critical" : "info",
+      title: "Analysis Complete",
+      description: analysisResult.forensicSummary || "Analysis completed successfully"
+    });
+  }
+
+  const isManipulated = analysisResult.verdict === "LIKELY_MANIPULATED";
+
+  const handleCopy = () => {
+    const reportText = [
+      `DEEPFAKE ANALYSIS REPORT`,
+      `========================`,
+      ``,
+      `Verdict: ${analysisResult.verdict}`,
+      `Confidence: ${analysisResult.confidence}%`,
+      `Fake Probability: ${analysisResult.fakeProbability}%`,
+      `Risk Level: ${analysisResult.riskLevel}`,
+      ``,
+      `FINDINGS:`,
+      ...reportItems.map(item => `[${item.severity.toUpperCase()}] ${item.title}: ${item.description}`),
+      ``,
+      `SUMMARY:`,
+      analysisResult.forensicSummary || "N/A"
+    ].join('\n');
+    
+    navigator.clipboard.writeText(reportText);
+    toast({
+      title: "Report Copied",
+      description: "Forensic report has been copied to clipboard",
+    });
+  };
+
+  const handleExport = () => {
+    const reportData = {
+      timestamp: new Date().toISOString(),
+      ...analysisResult
+    };
+    
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `forensic-report-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Report Exported",
+      description: "Forensic report has been downloaded as JSON",
+    });
+  };
+
   return (
     <div className="forensic-card p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-destructive/10">
-            <FileText className="w-5 h-5 text-destructive" />
+          <div className={`p-2 rounded-lg ${isManipulated ? 'bg-destructive/10' : 'bg-success/10'}`}>
+            <FileText className={`w-5 h-5 ${isManipulated ? 'text-destructive' : 'text-success'}`} />
           </div>
           <div>
             <h2 className="font-semibold">Explainable Forensic Report</h2>
-            <p className="text-xs text-muted-foreground">Human-readable analysis summary</p>
+            <p className="text-xs text-muted-foreground">AI-generated analysis summary</p>
           </div>
         </div>
         
@@ -83,7 +141,7 @@ const ForensicReport = ({ isAnalyzed }: { isAnalyzed: boolean }) => {
             <Copy className="w-3.5 h-3.5" />
             Copy
           </Button>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
             <Download className="w-3.5 h-3.5" />
             Export
           </Button>
@@ -128,13 +186,15 @@ const ForensicReport = ({ isAnalyzed }: { isAnalyzed: boolean }) => {
 
       <div className="mt-6 p-4 bg-forensic-navy rounded-lg border border-border">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+          <div className={`w-2 h-2 rounded-full ${isManipulated ? 'bg-destructive' : 'bg-success'} animate-pulse`} />
           <span className="text-sm font-semibold">Final Assessment</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          This media exhibits <span className="text-destructive font-medium">multiple high-confidence manipulation indicators</span> consistent with 
-          AI-generated deepfake content. The combination of face swap artifacts, synthetic voice patterns, and temporal inconsistencies 
-          strongly suggests this is <span className="text-destructive font-medium">not authentic footage</span>.
+          {analysisResult.forensicSummary || (
+            isManipulated 
+              ? "This media exhibits multiple high-confidence manipulation indicators consistent with AI-generated deepfake content."
+              : "This media appears to be authentic based on the forensic analysis. No significant manipulation indicators were detected."
+          )}
         </p>
       </div>
     </div>

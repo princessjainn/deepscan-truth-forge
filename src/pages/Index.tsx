@@ -11,20 +11,22 @@ import IntegrationFlow from "@/components/IntegrationFlow";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, Mic, Clock, FileCode } from "lucide-react";
+import { useDeepfakeAnalysis, AnalysisResult } from "@/hooks/useDeepfakeAnalysis";
 
 const Index = () => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isAnalyzed, setIsAnalyzed] = useState(false);
+  const [mediaType, setMediaType] = useState<"image" | "video" | "audio">("video");
+  const { isAnalyzing, analysisResult, analyzeMedia, resetAnalysis } = useDeepfakeAnalysis();
 
-  const handleAnalyze = () => {
-    setIsAnalyzing(true);
-    setIsAnalyzed(false);
-    
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setIsAnalyzed(true);
-    }, 3000);
+  const handleAnalyze = async (type: "image" | "video" | "audio", mediaData?: string) => {
+    setMediaType(type);
+    await analyzeMedia(type, mediaData, ["visual", "audio", "temporal", "metadata"]);
   };
+
+  const handleReset = () => {
+    resetAnalysis();
+  };
+
+  const isAnalyzed = !!analysisResult;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -41,18 +43,26 @@ const Index = () => {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-6 bg-primary rounded-full" />
-            <h2 className="text-lg font-semibold">Media Authenticity Analysis</h2>
+            <h2 className="text-lg font-semibold">AI-Powered Media Authenticity Analysis</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left - Upload Panel */}
             <div className="lg:col-span-4">
-              <MediaUpload onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+              <MediaUpload 
+                onAnalyze={handleAnalyze} 
+                isAnalyzing={isAnalyzing}
+                onReset={handleReset}
+              />
             </div>
 
             {/* Right - Risk Summary */}
             <div className="lg:col-span-8">
-              <RiskSummary isAnalyzed={isAnalyzed} isAnalyzing={isAnalyzing} />
+              <RiskSummary 
+                isAnalyzed={isAnalyzed} 
+                isAnalyzing={isAnalyzing}
+                analysisResult={analysisResult}
+              />
             </div>
           </div>
         </section>
@@ -98,19 +108,19 @@ const Index = () => {
 
             <div className="mt-4">
               <TabsContent value="visual" className="mt-0">
-                <VisualForensics isAnalyzed={isAnalyzed} />
+                <VisualForensics isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
               </TabsContent>
               
               <TabsContent value="audio" className="mt-0">
-                <AudioAnalysis isAnalyzed={isAnalyzed} />
+                <AudioAnalysis isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
               </TabsContent>
               
               <TabsContent value="temporal" className="mt-0">
-                <TemporalAnalysis isAnalyzed={isAnalyzed} />
+                <TemporalAnalysis isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
               </TabsContent>
 
               <TabsContent value="metadata" className="mt-0">
-                <MetadataAnalysis isAnalyzed={isAnalyzed} />
+                <MetadataAnalysis isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
               </TabsContent>
             </div>
           </Tabs>
@@ -123,7 +133,7 @@ const Index = () => {
             <h2 className="text-lg font-semibold">Explainable Forensic Report</h2>
           </div>
           
-          <ForensicReport isAnalyzed={isAnalyzed} />
+          <ForensicReport isAnalyzed={isAnalyzed} analysisResult={analysisResult} />
         </section>
 
       </main>

@@ -1,15 +1,17 @@
-import { useState, useCallback } from "react";
-import { Upload, Image, Video, Music, FileWarning, Play, X } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { Upload, Image, Video, Music, FileWarning, Play, X, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MediaUploadProps {
-  onAnalyze: () => void;
+  onAnalyze: (type: "image" | "video" | "audio", mediaData?: string) => void;
   isAnalyzing: boolean;
+  onReset?: () => void;
 }
 
-const MediaUpload = ({ onAnalyze, isAnalyzing }: MediaUploadProps) => {
+const MediaUpload = ({ onAnalyze, isAnalyzing, onReset }: MediaUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; type: string; preview?: string } | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<{ name: string; type: "image" | "video" | "audio"; data?: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -21,40 +23,96 @@ const MediaUpload = ({ onAnalyze, isAnalyzing }: MediaUploadProps) => {
     setIsDragging(false);
   }, []);
 
+  const getMediaType = (file: File): "image" | "video" | "audio" => {
+    if (file.type.startsWith("image/")) return "image";
+    if (file.type.startsWith("video/")) return "video";
+    if (file.type.startsWith("audio/")) return "audio";
+    return "video";
+  };
+
+  const processFile = async (file: File) => {
+    const type = getMediaType(file);
+    
+    // Convert to base64 for image analysis
+    if (type === "image") {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        setUploadedFile({
+          name: file.name,
+          type,
+          data: base64
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setUploadedFile({
+        name: file.name,
+        type
+      });
+    }
+  };
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     
-    // Simulate file upload
-    setUploadedFile({
-      name: "suspect_media_001.mp4",
-      type: "video",
-      preview: undefined
-    });
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      processFile(files[0]);
+    }
   }, []);
 
-  const handleFileSelect = () => {
-    // Simulate file selection
-    setUploadedFile({
-      name: "suspect_media_001.mp4",
-      type: "video",
-      preview: undefined
-    });
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    }
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
   };
 
   const clearUpload = () => {
     setUploadedFile(null);
+    onReset?.();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleAnalyze = () => {
+    if (uploadedFile) {
+      onAnalyze(uploadedFile.type, uploadedFile.data);
+    }
+  };
+
+  const getFileIcon = () => {
+    switch (uploadedFile?.type) {
+      case "image": return <Image className="w-10 h-10 text-primary" />;
+      case "audio": return <Music className="w-10 h-10 text-primary" />;
+      default: return <Video className="w-10 h-10 text-primary" />;
+    }
   };
 
   return (
     <div className="forensic-card p-6 h-full flex flex-col">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,video/*,audio/*"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg bg-primary/10">
           <Upload className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-semibold">Media Input</h2>
-          <p className="text-xs text-muted-foreground">Upload media for forensic analysis</p>
+          <p className="text-xs text-muted-foreground">Upload media for AI forensic analysis</p>
         </div>
       </div>
 
@@ -63,7 +121,7 @@ const MediaUpload = ({ onAnalyze, isAnalyzing }: MediaUploadProps) => {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={handleFileSelect}
+          onClick={handleClick}
           className={`
             flex-1 border-2 border-dashed rounded-lg p-8 
             flex flex-col items-center justify-center gap-4 cursor-pointer
@@ -115,10 +173,10 @@ const MediaUpload = ({ onAnalyze, isAnalyzing }: MediaUploadProps) => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-forensic-navy flex items-center justify-center">
-                  <Video className="w-10 h-10 text-primary" />
+                  {getFileIcon()}
                 </div>
                 <p className="font-mono text-sm">{uploadedFile.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">Video file • 24.5 MB</p>
+                <p className="text-xs text-muted-foreground mt-1 capitalize">{uploadedFile.type} file</p>
               </div>
             </div>
             
@@ -139,26 +197,38 @@ const MediaUpload = ({ onAnalyze, isAnalyzing }: MediaUploadProps) => {
             <FileWarning className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-warning">Unverified Media</p>
-              <p className="text-xs text-muted-foreground">Run forensic analysis to verify authenticity</p>
+              <p className="text-xs text-muted-foreground">Run AI forensic analysis to verify authenticity</p>
             </div>
           </div>
         </div>
       )}
 
-      <Button 
-        onClick={onAnalyze}
-        disabled={!uploadedFile || isAnalyzing}
-        className="w-full mt-6 h-12 text-base font-semibold bg-gradient-to-r from-primary to-forensic-cyan hover:opacity-90 transition-opacity"
-      >
-        {isAnalyzing ? (
-          <span className="flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-            Running Forensic Analysis...
-          </span>
-        ) : (
-          "Run Forensic Analysis"
+      <div className="flex gap-2 mt-6">
+        {uploadedFile && (
+          <Button 
+            onClick={clearUpload}
+            variant="outline"
+            className="gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset
+          </Button>
         )}
-      </Button>
+        <Button 
+          onClick={handleAnalyze}
+          disabled={!uploadedFile || isAnalyzing}
+          className="flex-1 h-12 text-base font-semibold bg-gradient-to-r from-primary to-forensic-cyan hover:opacity-90 transition-opacity"
+        >
+          {isAnalyzing ? (
+            <span className="flex items-center gap-2">
+              <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              Analyzing with AI...
+            </span>
+          ) : (
+            "Run AI Forensic Analysis"
+          )}
+        </Button>
+      </div>
     </div>
   );
 };
