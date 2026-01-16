@@ -1,10 +1,12 @@
 import { Eye, AlertTriangle, CheckCircle, XCircle, Scan } from "lucide-react";
+import { AnalysisResult } from "@/hooks/useDeepfakeAnalysis";
 
 interface VisualForensicsProps {
   isAnalyzed: boolean;
+  analysisResult?: AnalysisResult | null;
 }
 
-const VisualForensics = ({ isAnalyzed }: VisualForensicsProps) => {
+const VisualForensics = ({ isAnalyzed, analysisResult }: VisualForensicsProps) => {
   if (!isAnalyzed) {
     return (
       <div className="forensic-card p-6">
@@ -21,13 +23,36 @@ const VisualForensics = ({ isAnalyzed }: VisualForensicsProps) => {
     );
   }
 
+  const visual = analysisResult?.visualAnalysis;
+  
   const visualChecks = [
-    { check: "Face Swap Detection", status: "fail", confidence: 94, detail: "GAN-based replacement detected" },
-    { check: "Boundary Artifacts", status: "fail", confidence: 87, detail: "Jaw and hairline inconsistencies" },
-    { check: "Lighting Analysis", status: "warning", confidence: 68, detail: "Directional mismatch detected" },
-    { check: "Skin Texture", status: "warning", confidence: 72, detail: "Synthetic smoothing patterns" },
-    { check: "Eye Reflection", status: "pass", confidence: 91, detail: "Consistent light sources" },
+    { 
+      check: "Face Swap Detection", 
+      status: (visual?.faceSwapScore || 0) > 70 ? "fail" : (visual?.faceSwapScore || 0) > 40 ? "warning" : "pass", 
+      confidence: visual?.faceSwapScore || 0, 
+      detail: (visual?.faceSwapScore || 0) > 70 ? "GAN-based replacement detected" : "No significant face swap artifacts" 
+    },
+    { 
+      check: "GAN Artifacts", 
+      status: (visual?.ganArtifactScore || 0) > 70 ? "fail" : (visual?.ganArtifactScore || 0) > 40 ? "warning" : "pass", 
+      confidence: visual?.ganArtifactScore || 0, 
+      detail: (visual?.ganArtifactScore || 0) > 70 ? "Synthetic generation patterns found" : "No GAN artifacts detected" 
+    },
+    { 
+      check: "Boundary Artifacts", 
+      status: (visual?.boundaryArtifacts || 0) > 70 ? "fail" : (visual?.boundaryArtifacts || 0) > 40 ? "warning" : "pass", 
+      confidence: visual?.boundaryArtifacts || 0, 
+      detail: (visual?.boundaryArtifacts || 0) > 70 ? "Jaw and hairline inconsistencies" : "Clean boundaries detected" 
+    },
+    { 
+      check: "Lighting Consistency", 
+      status: (visual?.lightingConsistency || 100) < 50 ? "fail" : (visual?.lightingConsistency || 100) < 70 ? "warning" : "pass", 
+      confidence: visual?.lightingConsistency || 100, 
+      detail: (visual?.lightingConsistency || 100) < 50 ? "Directional mismatch detected" : "Consistent light sources" 
+    },
   ];
+
+  const hasManipulation = visualChecks.some(c => c.status === "fail");
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -51,16 +76,22 @@ const VisualForensics = ({ isAnalyzed }: VisualForensicsProps) => {
     <div className="forensic-card p-6">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-destructive/10">
-            <Eye className="w-5 h-5 text-destructive" />
+          <div className={`p-2 rounded-lg ${hasManipulation ? 'bg-destructive/10' : 'bg-success/10'}`}>
+            <Eye className={`w-5 h-5 ${hasManipulation ? 'text-destructive' : 'text-success'}`} />
           </div>
           <h3 className="font-semibold">Visual Forensics</h3>
         </div>
-        <span className="threat-high text-xs">
-          <AlertTriangle className="w-3 h-3" />
-          MANIPULATION
-        </span>
+        {hasManipulation && (
+          <span className="threat-high text-xs">
+            <AlertTriangle className="w-3 h-3" />
+            MANIPULATION
+          </span>
+        )}
       </div>
+
+      {visual?.details && (
+        <p className="text-sm text-muted-foreground mb-4">{visual.details}</p>
+      )}
 
       <div className="space-y-3">
         {visualChecks.map((result, i) => (
@@ -77,10 +108,12 @@ const VisualForensics = ({ isAnalyzed }: VisualForensicsProps) => {
         ))}
       </div>
 
-      <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+      <div className={`mt-4 p-3 rounded-lg ${hasManipulation ? 'bg-destructive/10 border border-destructive/20' : 'bg-success/10 border border-success/20'}`}>
         <div className="flex items-center gap-2">
-          <Scan className="w-4 h-4 text-destructive" />
-          <span className="text-sm font-medium text-destructive">Visual Manipulation Confirmed</span>
+          <Scan className={`w-4 h-4 ${hasManipulation ? 'text-destructive' : 'text-success'}`} />
+          <span className={`text-sm font-medium ${hasManipulation ? 'text-destructive' : 'text-success'}`}>
+            {hasManipulation ? 'Visual Manipulation Detected' : 'No Visual Manipulation Detected'}
+          </span>
         </div>
       </div>
     </div>

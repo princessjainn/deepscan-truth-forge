@@ -1,10 +1,12 @@
 import { Clock, AlertTriangle, Eye, Film } from "lucide-react";
+import { AnalysisResult } from "@/hooks/useDeepfakeAnalysis";
 
 interface TemporalAnalysisProps {
   isAnalyzed: boolean;
+  analysisResult?: AnalysisResult | null;
 }
 
-const TemporalAnalysis = ({ isAnalyzed }: TemporalAnalysisProps) => {
+const TemporalAnalysis = ({ isAnalyzed, analysisResult }: TemporalAnalysisProps) => {
   if (!isAnalyzed) {
     return (
       <div className="forensic-card p-6">
@@ -21,12 +23,31 @@ const TemporalAnalysis = ({ isAnalyzed }: TemporalAnalysisProps) => {
     );
   }
 
+  const temporal = analysisResult?.temporalAnalysis;
+
   const temporalChecks = [
-    { label: "Lip Sync Accuracy", value: 23, threshold: 45, status: "fail" },
-    { label: "Blink Pattern", value: 3.2, threshold: 4.0, status: "fail", unit: "sec" },
-    { label: "Frame Consistency", value: 68, threshold: 85, status: "warning" },
-    { label: "Motion Blur", value: 74, threshold: 70, status: "pass" },
+    { 
+      label: "Frame Consistency", 
+      value: temporal?.frameConsistency || 50, 
+      threshold: 85, 
+      status: (temporal?.frameConsistency || 50) < 60 ? "fail" : (temporal?.frameConsistency || 50) < 85 ? "warning" : "pass" 
+    },
+    { 
+      label: "Blink Pattern Score", 
+      value: temporal?.blinkPatternScore || 50, 
+      threshold: 70, 
+      status: (temporal?.blinkPatternScore || 50) < 50 ? "fail" : (temporal?.blinkPatternScore || 50) < 70 ? "warning" : "pass" 
+    },
+    { 
+      label: "Motion Coherence", 
+      value: temporal?.motionCoherence || 50, 
+      threshold: 80, 
+      status: (temporal?.motionCoherence || 50) < 60 ? "fail" : (temporal?.motionCoherence || 50) < 80 ? "warning" : "pass" 
+    },
   ];
+
+  const hasAnomalies = temporalChecks.some(c => c.status === "fail" || c.status === "warning");
+  const hasDesync = (temporal?.frameConsistency || 100) < 70;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -50,26 +71,30 @@ const TemporalAnalysis = ({ isAnalyzed }: TemporalAnalysisProps) => {
     <div className="forensic-card p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-warning/10">
-            <Clock className="w-5 h-5 text-warning" />
+          <div className={`p-2 rounded-lg ${hasAnomalies ? 'bg-warning/10' : 'bg-success/10'}`}>
+            <Clock className={`w-5 h-5 ${hasAnomalies ? 'text-warning' : 'text-success'}`} />
           </div>
           <h3 className="font-semibold">Temporal Analysis</h3>
         </div>
-        <span className="threat-medium text-xs">
-          <AlertTriangle className="w-3 h-3" />
-          ANOMALIES
-        </span>
+        {hasAnomalies && (
+          <span className="threat-medium text-xs">
+            <AlertTriangle className="w-3 h-3" />
+            ANOMALIES
+          </span>
+        )}
       </div>
 
-      <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 mb-4">
-        <div className="flex items-center gap-2 text-destructive text-sm font-medium">
-          <Eye className="w-4 h-4" />
-          <span>Audio-Visual Desynchronization</span>
+      {hasDesync && (
+        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 mb-4">
+          <div className="flex items-center gap-2 text-destructive text-sm font-medium">
+            <Eye className="w-4 h-4" />
+            <span>Temporal Inconsistencies Detected</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            {temporal?.details || "Frame-level anomalies suggest potential manipulation"}
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Lip movements lag behind audio by ~120ms (threshold: 45ms)
-        </p>
-      </div>
+      )}
 
       <div className="space-y-4">
         {temporalChecks.map((check, i) => (
@@ -77,7 +102,7 @@ const TemporalAnalysis = ({ isAnalyzed }: TemporalAnalysisProps) => {
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm">{check.label}</span>
               <span className={`text-xs font-mono ${getStatusColor(check.status)}`}>
-                {check.value}{check.unit || "%"} / {check.threshold}{check.unit || "%"}
+                {check.value}% / {check.threshold}%
               </span>
             </div>
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -90,10 +115,12 @@ const TemporalAnalysis = ({ isAnalyzed }: TemporalAnalysisProps) => {
         ))}
       </div>
 
-      <div className="mt-4 p-3 rounded-lg bg-warning/10 border border-warning/20">
+      <div className={`mt-4 p-3 rounded-lg ${hasAnomalies ? 'bg-warning/10 border border-warning/20' : 'bg-success/10 border border-success/20'}`}>
         <div className="flex items-center gap-2">
-          <Film className="w-4 h-4 text-warning" />
-          <span className="text-sm font-medium text-warning">Frame Interpolation Artifacts Detected</span>
+          <Film className={`w-4 h-4 ${hasAnomalies ? 'text-warning' : 'text-success'}`} />
+          <span className={`text-sm font-medium ${hasAnomalies ? 'text-warning' : 'text-success'}`}>
+            {hasAnomalies ? 'Temporal Artifacts Detected' : 'Temporal Consistency Verified'}
+          </span>
         </div>
       </div>
     </div>
