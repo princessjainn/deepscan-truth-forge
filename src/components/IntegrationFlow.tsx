@@ -1,4 +1,4 @@
-import { ArrowRight, Upload, Cpu, Shield, CheckCircle, Eye } from "lucide-react";
+import { ArrowRight, Upload, Cpu, Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
 interface IntegrationFlowProps {
   isAnalyzed: boolean;
@@ -9,22 +9,22 @@ const IntegrationFlow = ({ isAnalyzed, isAnalyzing }: IntegrationFlowProps) => {
   const steps = [
     {
       icon: Upload,
-      label: "Submit",
+      label: "Upload",
       status: isAnalyzed || isAnalyzing ? "complete" : "pending"
     },
     {
       icon: Cpu,
-      label: "TRUEFY API",
+      label: "AI Analysis",
       status: isAnalyzing ? "active" : isAnalyzed ? "complete" : "pending"
     },
     {
       icon: Shield,
-      label: "Verify",
+      label: "Forensics",
       status: isAnalyzing ? "active" : isAnalyzed ? "complete" : "pending"
     },
     {
-      icon: isAnalyzed ? Eye : CheckCircle,
-      label: isAnalyzed ? "Review" : "Decision",
+      icon: isAnalyzed ? AlertTriangle : CheckCircle,
+      label: isAnalyzed ? "Flagged" : "Verdict",
       status: isAnalyzed ? "flagged" : "pending"
     }
   ];
@@ -36,7 +36,7 @@ const IntegrationFlow = ({ isAnalyzed, isAnalyzing }: IntegrationFlowProps) => {
       case "active":
         return "bg-primary text-primary-foreground border-primary animate-pulse";
       case "flagged":
-        return "bg-warning text-warning-foreground border-warning";
+        return "bg-destructive text-destructive-foreground border-destructive";
       default:
         return "bg-muted text-muted-foreground border-border";
     }
