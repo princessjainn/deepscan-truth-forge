@@ -17,9 +17,10 @@ import {
 import truefyLogo from "@/assets/truefy-logo.png";
 
 const mainNavItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Analysis", url: "/analysis", icon: Scan },
-  { title: "Reports", url: "/reports", icon: FileText },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: Scan },
+  { title: "Analysis", url: "/analysis", icon: FileText },
+  { title: "Reports", url: "/reports", icon: Shield },
 ];
 
 const settingsNavItems = [
