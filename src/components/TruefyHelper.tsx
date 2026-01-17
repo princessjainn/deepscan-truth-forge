@@ -96,18 +96,10 @@ const TruefyHelper = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`
-          relative group w-16 h-16 rounded-full overflow-hidden
-          shadow-lg hover:shadow-xl transition-all duration-300
-          border-2 hover:scale-110
-          ${isOpen 
-            ? "border-destructive bg-card" 
-            : "border-[hsl(var(--truefy-orange))] bg-gradient-to-br from-[hsl(var(--truefy-orange))] to-[hsl(var(--truefy-orange-dark))]"
-          }
-        `}
+        className="relative group w-16 h-16 transition-all duration-300 hover:scale-110"
       >
         {isOpen ? (
-          <div className="w-full h-full flex items-center justify-center bg-card">
+          <div className="w-full h-full flex items-center justify-center bg-card rounded-full border border-border shadow-lg">
             <X className="w-6 h-6 text-foreground" />
           </div>
         ) : (
@@ -115,13 +107,11 @@ const TruefyHelper = () => {
             <img 
               src={truefyMascot} 
               alt="Truefy Helper" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain drop-shadow-2xl"
             />
-            {/* Pulse Animation */}
-            <div className="absolute inset-0 rounded-full border-2 border-[hsl(var(--truefy-orange))] animate-ping opacity-30" />
             
             {/* Chat Bubble Indicator */}
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md animate-bounce">
               <MessageCircle className="w-3 h-3 text-primary-foreground" />
             </div>
           </>
