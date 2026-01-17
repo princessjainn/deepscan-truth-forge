@@ -1,10 +1,13 @@
 import { useState, useCallback, useRef } from "react";
-import { Upload, Link as LinkIcon, Image, Video, Music, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
+import { Upload, Link as LinkIcon, ArrowRight, CheckCircle, Sparkles, ShieldCheck, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import truefyLogo from "@/assets/truefy-logo.png";
+import truefyMascot from "@/assets/truefy-mascot.png";
+import fakeFood from "@/assets/fake-food.png";
+import realFood from "@/assets/real-food.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -68,9 +71,9 @@ const LandingPage = () => {
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src={truefyLogo} 
-              alt="TRUEFY Logo" 
-              className="w-10 h-10 object-contain"
+              src={truefyMascot} 
+              alt="TRUEFY Mascot" 
+              className="w-12 h-12 object-contain rounded-lg"
             />
             <span className="text-xl font-bold">
               <span className="text-foreground">TRUE</span>
@@ -99,58 +102,90 @@ const LandingPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12 lg:py-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+      <main className="container mx-auto px-6 py-12 lg:py-16">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Left Column - Hero Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-                Detect AI-Generated &{" "}
-                <span className="text-primary">Deepfake Content</span>
-              </h1>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm">Powered by advanced forensic AI models</span>
+              <div className="flex items-center gap-4">
+                <img 
+                  src={truefyMascot} 
+                  alt="TRUEFY Mascot" 
+                  className="w-20 h-20 object-contain rounded-xl shadow-lg border-2 border-primary/30"
+                />
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
+                    Detect AI-Generated &{" "}
+                    <span className="text-primary">Deepfake Content</span>
+                  </h1>
+                  <div className="flex items-center gap-2 text-muted-foreground mt-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    <span className="text-sm">Powered by advanced forensic AI models</span>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            {/* Real vs Fake Comparison */}
+            <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-center text-foreground">
+                Can You Spot The Difference?
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Fake Image */}
+                <div className="relative group">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold bg-destructive text-destructive-foreground flex items-center gap-1 shadow-lg">
+                    <AlertTriangle className="w-3 h-3" />
+                    FAKE
+                  </div>
+                  <div className="relative overflow-hidden rounded-lg border-2 border-destructive/50 shadow-lg group-hover:border-destructive transition-colors">
+                    <img 
+                      src={fakeFood} 
+                      alt="Fake manipulated image" 
+                      className="w-full h-44 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-destructive/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-2 left-2 right-2 text-xs text-white bg-black/60 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Manipulated: Mold added digitally
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real Image */}
+                <div className="relative group">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold bg-success text-success-foreground flex items-center gap-1 shadow-lg">
+                    <ShieldCheck className="w-3 h-3" />
+                    REAL
+                  </div>
+                  <div className="relative overflow-hidden rounded-lg border-2 border-success/50 shadow-lg group-hover:border-success transition-colors">
+                    <img 
+                      src={realFood} 
+                      alt="Authentic original image" 
+                      className="w-full h-44 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-success/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-2 left-2 right-2 text-xs text-white bg-black/60 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Original unaltered image
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                Our AI detects manipulated content in seconds with <span className="text-primary font-semibold">99.2% accuracy</span>
+              </p>
             </div>
 
             {/* Feature List */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors"
+                  className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors"
                 >
                   <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-muted-foreground">{feature.text}</p>
+                  <p className="text-sm text-muted-foreground">{feature.text}</p>
                 </div>
               ))}
-            </div>
-
-            {/* Demo Preview */}
-            <div className="relative mt-8">
-              <div className="flex items-end gap-4">
-                <div className="relative group">
-                  <div className="absolute -top-6 left-4 px-2 py-1 rounded text-xs font-bold bg-success text-success-foreground">
-                    REAL
-                  </div>
-                  <div className="w-32 h-40 rounded-lg bg-gradient-to-br from-muted to-muted/50 border-2 border-success/50 flex items-center justify-center overflow-hidden">
-                    <Image className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                </div>
-                <div className="relative group">
-                  <div className="absolute -top-6 left-4 px-2 py-1 rounded text-xs font-bold bg-destructive text-destructive-foreground">
-                    FAKE
-                  </div>
-                  <div className="w-32 h-40 rounded-lg bg-gradient-to-br from-muted to-muted/50 border-2 border-destructive/50 flex items-center justify-center overflow-hidden">
-                    <Image className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                </div>
-              </div>
-              <svg className="absolute -top-4 right-1/3 w-16 h-16 text-muted-foreground/50" viewBox="0 0 100 100">
-                <path d="M10 50 Q 50 10 90 50" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="5,5"/>
-                <path d="M85 45 L 90 50 L 80 55" fill="none" stroke="currentColor" strokeWidth="2"/>
-              </svg>
             </div>
           </div>
 
