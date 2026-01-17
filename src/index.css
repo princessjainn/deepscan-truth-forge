@@ -51,6 +51,8 @@
     --forensic-charcoal: 220 26% 90%;
     --forensic-glow: 217 91% 50%;
     --forensic-cyan: 187 92% 40%;
+    --truefy-orange: 24 95% 53%;
+    --truefy-orange-dark: 17 88% 40%;
 
     /* Gradients */
     --gradient-dark: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(217 20% 95%) 100%);
@@ -59,6 +61,7 @@
     --gradient-success: linear-gradient(135deg, hsl(142 71% 40%) 0%, hsl(142 76% 32%) 100%);
     --gradient-warning: linear-gradient(135deg, hsl(38 92% 45%) 0%, hsl(32 95% 40%) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 50%) 0%, hsl(217 91% 40%) 100%);
+    --gradient-truefy: linear-gradient(135deg, hsl(24 95% 53%) 0%, hsl(17 88% 40%) 100%);
 
     /* Shadows */
     --shadow-glow: 0 0 40px -10px hsl(217 91% 50% / 0.15);
@@ -120,6 +123,8 @@
     --forensic-charcoal: 220 26% 14%;
     --forensic-glow: 217 91% 60%;
     --forensic-cyan: 187 92% 53%;
+    --truefy-orange: 24 95% 53%;
+    --truefy-orange-dark: 17 88% 35%;
 
     /* Gradients */
     --gradient-dark: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 6%) 100%);
@@ -128,6 +133,7 @@
     --gradient-success: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(142 76% 36%) 100%);
     --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(32 95% 44%) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 45%) 100%);
+    --gradient-truefy: linear-gradient(135deg, hsl(24 95% 53%) 0%, hsl(17 88% 35%) 100%);
 
     /* Shadows */
     --shadow-glow: 0 0 40px -10px hsl(217 91% 60% / 0.3);
