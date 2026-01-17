@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Home, Scan, FileText, Shield, Settings } from "lucide-react";
 import {
@@ -31,13 +31,17 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+        <button 
+          onClick={() => navigate("/")}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <div className="relative flex-shrink-0">
             <img
               src={truefyLogo}
@@ -46,7 +50,7 @@ export function AppSidebar() {
             />
           </div>
           {!collapsed && (
-            <div className="overflow-hidden">
+            <div className="overflow-hidden text-left">
               <h1 className="text-lg font-bold tracking-tight flex items-center gap-0.5">
                 <span className="text-foreground">TRUE</span>
                 <span className="gradient-text">FY</span>
@@ -56,7 +60,7 @@ export function AppSidebar() {
               </p>
             </div>
           )}
-        </div>
+        </button>
       </SidebarHeader>
 
       <SidebarContent className="px-2">
